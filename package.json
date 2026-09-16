@@ -1,17 +1,19 @@
 {
-  "name": "clase",
+  "name": "clasev2",
   "version": "1.0.0",
-  "description": "",
+  "description": "clase refactorizado",
   "license": "ISC",
-  "author": "",
-  "type": "commonjs",
+  "author": "Regina",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node index.js",
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "cors": "^2.8.6",
     "express": "^5.2.1",
+    "mongodb": "^7.6.0",
     "nodemon": "3.1.14"
   }
 }

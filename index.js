@@ -1,55 +1,59 @@
-const express = require("express");
+import express from "express";
+import cors from 'cors'
+import { 
+  obtenerTodasLasPizzasAsync, 
+  obtenerPizzaPorIdAsync, 
+  agregarPizzaAsync, 
+  actualizarPizzaAsync, 
+  borrarPizzaAsync 
+} from './repositorios/pizza.repositorio.js'
+
 const app = express();
-const PORT = 3000;
+app.use(cors())
 
-// Ruta principal
-app.get("/", (req, res) => {
-    const saludo = {
-        mensaje: "Bienvenido a la Api Fes Aragon V1"
-    };
+const PORT = 3000; // Puerto en el que escuchará el servidor
 
-    return res.json(saludo);
+//Configuración para usar el body en un metodo/verbo POST
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/api/v1/pizzas", async (req, res) => {
+  const pizzas = await obtenerTodasLasPizzasAsync()
+  return res.status(200).json(pizzas);
 });
 
-// Lista de pizzas
-app.get("/api/v1/pizzas", (req, res) => {
-    const pizzas = [
-        "Napolitana",
-        "Siciliana",
-        "Calzone",
-        "4 quesos",
-        "Margarita",
-        "Estilo Chicago",
-        "Al Taglio"
-    ];
+app.get("/api/v1/pizzas/:id", async (req, res) => {
+  const id = req.params.id
+  const pizza = await obtenerPizzaPorIdAsync(id)
 
-    return res.json(pizzas);
+  return res.status(200).json(pizza);
 });
 
-// Lista de tamaños
-app.get("/api/v1/tamanios", (req, res) => {
-    const tamaños = [
-        "Personal",
-        "Mediana",
-        "Grande"
-    ];
+app.post("/api/v1/pizzas", async (req, res) => {
+  const pizza = req.body
+  const pizzaCreada = await agregarPizzaAsync(pizza)
 
-    return res.json(tamaños);
+  return res.status(201).json(pizzaCreada);
 });
 
-// Lista de bebidas
-app.get("/api/v1/bebidas", (req, res) => {
-    const bebidas = [
-        "Coca-Cola Diet",
-        "Limonada",
-        "Naranjada",
-        "Agua"
-    ];
+app.put("/api/v1/pizzas/:id", async (req, res) => {
+  const id = req.params.id
+  const pizza = req.body
+  await actualizarPizzaAsync(id, pizza)
 
-    return res.json(bebidas);
+  return res.status(200).json({ mensaje: "Pizza actualizada correctamente" });
 });
 
-// Iniciar servidor
+app.delete("/api/v1/pizzas/:id", async (req, res) => {
+  const id = req.params.id
+  await borrarPizzaAsync(id)
+
+  return res.status(200).json({ mensaje: "Pizza borrada correctamente" });
+});
+
+// Iniciar el servidor
 app.listen(PORT, () => {
-    console.log(`Servidor Express escuchando en el puerto ${PORT}`);
+  console.log(
+    `Servidor Express escuchando en el puerto http://localhost:${PORT}`,
+  );
 });
